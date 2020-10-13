@@ -1,0 +1,50 @@
+@startuml
+
+interface NodeConcept
+
+interface CubeNode extends NodeConcept {
+    CubeReference getCubeReference()
+    boolean getExcludeDimensionDescriptions()
+}
+
+interface Account {
+    String getName();
+    Account create(String name);
+    List<Account> create(String... names);
+}
+
+interface Measure {
+    String getName();
+    Measure create(String name);
+    List<Measure> create(String... names);
+}
+
+interface CubeQueryDefinition extends CubeNode {
+    List<Attribute> getAttributes();
+    List<Measure> getMeasures();
+    List<Account> getAccounts();
+    String getVersionId();
+    CurrencyMode getCurrencyMode();
+}
+
+interface CubeQueryReader extends CubeNode {
+    String getQuery();
+   OutputPort getOut();
+}
+
+interface CubeReader extends CubeQueryDefinition {
+    OutputPort getOut();
+}
+
+interface PlanningCubeWriter extends CubeQueryDefinition {
+
+    InputPort getIn();
+    ColumnReference getForecast();
+    ColumnReference getTargetColumn();
+    ColumnReference getTime();
+}
+
+CubeQueryDefinition o-left- "1..*" Measure
+CubeQueryDefinition o-down- "1..*" Account
+
+@enduml
