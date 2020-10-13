@@ -45,6 +45,6 @@ interface PlanningCubeWriter extends CubeQueryDefinition {
 }
 
 CubeQueryDefinition o-left- "1..*" Measure
-CubeQueryDefinition o-down- "1..*" Account
+CubeQueryDefinition o-down- "0..*" Account
 
 @enduml
