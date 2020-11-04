@@ -44,7 +44,7 @@ interface PlanningCubeWriter extends CubeQueryDefinition {
     ColumnReference getTime();
 }
 
-CubeQueryDefinition o-left- "0..*" Measure
+CubeQueryDefinition o-left- "1..*" Measure
 CubeQueryDefinition o-down- "0..*" Account
 
 @enduml
