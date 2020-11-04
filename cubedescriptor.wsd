@@ -1,0 +1,29 @@
+@startuml
+
+interface MeasureDescriptor {
+    String getName();
+    String getDescription();
+    String getSqlType();
+}
+
+interface AccountDescriptor {
+    String getName();
+    String getDescription();
+    String getSqlType();
+}
+
+interface CubeDescriptor {
+
+    List<DimensionDescriptor> getDimensions();
+    List<MeasureDescriptor> getMeasures();
+    List<AccountDescriptor> getAccounts();
+    List<VariableDescriptor> getVariables();
+    boolean isCurrencyConversionEnabled();
+    Map<String, DimensionDescriptor> getDimensionsByName();
+    Map<String, MeasureDescriptor> getMeasuresByName();
+    Map<String, AttributeDescriptor> getAttributesByQualifiedName();
+}
+
+CubeDescriptor o-up- "0..*" MeasureDescriptor
+CubeDescriptor o-up- "0..*" AccountDescriptor
+@enduml
