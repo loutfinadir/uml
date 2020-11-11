@@ -1,0 +1,32 @@
+#https://plantuml.com/class-diagram
+
+// Aggregation implies a relationship where the child can exist independently of the parent. Example: Class (parent) and Student (child). Delete the Class and the Students still exist.
+// Composition implies a relationship where the child cannot exist independent of the parent. Example: House (parent) and Room (child). Rooms don't exist separate to a House.
+// Generalization is a mechanism for combining similar classes of objects into a single, more general class. Generalization identifies commonalities among a set of entities.
+// Specialization is the reverse process of Generalization means creating new sub-classes from an existing class.
+// Association 
+//If two classes in a model need to communicate with each other, there must be a link between them, and that can be represented by an association (connector).
+// Association can be represented by a line between these classes with an arrow indicating the navigation direction. In case an arrow is on both sides, the association is known as a bidirectional association.
+// We can indicate the multiplicity of an association by adding multiplicity adornments to the line denoting the association. The example indicates that a Student has one or more Instructors:
+
+@startuml
+
+
+Person *-- Head : Composition
+Person *-- Hand : Composition
+Person *-- Leg : Composition
+
+car o-- Engine : Agregation
+car o-- Wheel : Agregation
+
+BankAccount <|-- SavingAccount : Generalisation
+BankAccount <|-- CreditCardAccount : Generalisation
+
+
+Student "1..*"  --  "1..*"  Instructor: teachs
+
+Student "1..*" - "1..*" Course: Association
+
+(Student, Course) . Enrollment: Composed Association
+
+@enduml 
