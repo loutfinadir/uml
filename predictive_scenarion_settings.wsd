@@ -1,7 +1,7 @@
 //  https://apm.cf.eu10.hana.ondemand.com/e/f66da7fe-e37a-4712-a032-43754a3da350/#servicecall;sci=SERVICE-C8D137E7B20B549D;callURI=15996511Z1X1X0X91331115X20201112170906Y0Y0.session;gf=all
 
 @startuml
-
+autonumber "<b>(<u>##</u>)"
 actor User
 User -> PPRO_CORE_FRONTEND:Time series
 activate PPRO_CORE_FRONTEND
@@ -22,6 +22,7 @@ end box
 PPRO_CORE_FRONTEND -> ContentLib: getRepoView
 box "HANA XSC" #LightCyan
 participant ContentLib
+participant RestMember
 participant FireflyJS
 participant INAService
 end box
@@ -97,6 +98,22 @@ FireflyJava -> FireflyCubeProvider: Done
 FireflyCubeProvider -> PPRO_CORE_BACKEND: Done
 deactivate INAService
 
+PPRO_CORE_BACKEND -> ContentLib: getMetadata (getPlanningModelInfo)
+ContentLib -> FireflyJS
+FireflyJS  -> INAService
+INAService -> MDS
+MDS -> INAService: Done
+INAService -> FireflyJS: Done
+FireflyJS -> ContentLib: Done
+ContentLib -> PPRO_CORE_BACKEND: Done
+
+PPRO_CORE_BACKEND -> RestMember: /rest/fpa/member
+note left FireflyJava
+Account members Details:
+* Aggregation Type
+* Formula
+end note
+RestMember -> PPRO_CORE_BACKEND: Done
 
 PPRO_CORE_BACKEND -> PPRO_CORE_FRONTEND: Done
 PPRO_CORE_FRONTEND -> User: Done
