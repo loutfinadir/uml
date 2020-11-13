@@ -71,7 +71,6 @@ deactivate MDS
 INAService  -> FireflyJava: Done
 deactivate INAService
 FireflyJava -> FireflyCubeProvider: Done
-PPRO_CORE_FRONTEND -> User: Done
 deactivate INAService
 
 FireflyCubeProvider -> FireflyJava: getDimensions
@@ -99,4 +98,6 @@ FireflyCubeProvider -> PPRO_CORE_BACKEND: Done
 deactivate INAService
 
 
+PPRO_CORE_BACKEND -> PPRO_CORE_FRONTEND: Done
+PPRO_CORE_FRONTEND -> User: Done
 @enduml
