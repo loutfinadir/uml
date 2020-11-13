@@ -1,0 +1,102 @@
+//  https://apm.cf.eu10.hana.ondemand.com/e/f66da7fe-e37a-4712-a032-43754a3da350/#servicecall;sci=SERVICE-C8D137E7B20B549D;callURI=15996511Z1X1X0X91331115X20201112170906Y0Y0.session;gf=all
+
+@startuml
+
+actor User
+User -> PPRO_CORE_FRONTEND:Time series
+activate PPRO_CORE_FRONTEND
+box "Browser" #LightGreen
+participant User
+end box
+
+box "SAC application" #LightBlue
+participant PPRO_CORE_FRONTEND
+participant PPRO_CORE_BACKEND
+end box
+
+box "Pco Olap Common"
+participant FireflyCubeProvider
+participant FireflyJava
+end box
+
+PPRO_CORE_FRONTEND -> ContentLib: getRepoView
+box "HANA XSC" #LightCyan
+participant ContentLib
+participant FireflyJS
+participant INAService
+end box
+
+activate ContentLib
+
+ContentLib -> FireflyJS
+FireflyJS -> INAService
+activate INAService
+
+
+box "HANA Index server"
+participant MDS
+end box
+INAService -> MDS
+activate MDS
+deactivate INAService
+MDS->INAService
+deactivate MDS
+INAService -> FireflyJS
+
+FireflyJS -> ContentLib
+
+ContentLib -> PPRO_CORE_FRONTEND: Done
+deactivate ContentLib
+
+
+
+PPRO_CORE_FRONTEND -> User: Done
+deactivate PPRO_CORE_FRONTEND
+
+User -> PPRO_CORE_FRONTEND: Select Planning Model
+
+PPRO_CORE_FRONTEND -> PPRO_CORE_BACKEND: getMetadata
+
+PPRO_CORE_BACKEND -> FireflyCubeProvider: describe
+activate FireflyCubeProvider
+
+FireflyCubeProvider -> FireflyJava: getQueryManager
+
+FireflyJava -> INAService: ServerInfo
+activate INAService
+INAService -> MDS: GetServerInfo
+activate MDS
+MDS -> INAService: Done
+deactivate MDS
+INAService  -> FireflyJava: Done
+deactivate INAService
+FireflyJava -> FireflyCubeProvider: Done
+PPRO_CORE_FRONTEND -> User: Done
+deactivate INAService
+
+FireflyCubeProvider -> FireflyJava: getDimensions
+FireflyJava -> INAService: Metadata
+activate INAService
+INAService -> MDS
+activate MDS
+MDS -> INAService: Done
+deactivate MDS
+INAService -> FireflyJava: Done
+FireflyJava -> FireflyCubeProvider: Done
+deactivate INAService
+
+FireflyCubeProvider -> FireflyJava: getMeasures
+FireflyJava -> INAService: Analytics
+activate INAService
+INAService -> MDS
+activate MDS
+MDS -> INAService: Done
+deactivate MDS
+INAService -> FireflyJava: Done
+FireflyJava -> FireflyCubeProvider: Done
+
+FireflyCubeProvider -> PPRO_CORE_BACKEND: Done
+deactivate INAService
+
+
+@enduml
