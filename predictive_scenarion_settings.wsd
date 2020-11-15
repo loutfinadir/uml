@@ -14,8 +14,9 @@ participant PPRO_CORE_FRONTEND
 participant PPRO_CORE_BACKEND
 end box
 
-box "Pco Olap Common"
+box "Pco Olap Common / Planning"
 participant FireflyCubeProvider
+participant PlanningModel
 participant FireflyJava
 end box
 
@@ -36,6 +37,7 @@ activate INAService
 
 box "HANA Index server"
 participant MDS
+participant EPM
 end box
 INAService -> MDS
 activate MDS
@@ -48,8 +50,6 @@ FireflyJS -> ContentLib
 
 ContentLib -> PPRO_CORE_FRONTEND: Done
 deactivate ContentLib
-
-
 
 PPRO_CORE_FRONTEND -> User: Done
 deactivate PPRO_CORE_FRONTEND
@@ -114,6 +114,44 @@ Account members Details:
 * Formula
 end note
 RestMember -> PPRO_CORE_BACKEND: Done
+
+PPRO_CORE_BACKEND -> PlanningModel: getVersions
+PlanningModel -> FireflyJava: getQueryManager
+FireflyJava -> INAService: ServerInfo
+activate INAService
+INAService -> MDS: GetServerInfo
+activate MDS
+MDS -> INAService: Done
+deactivate MDS
+INAService  -> FireflyJava: Done
+deactivate INAService
+FireflyJava -> PlanningModel: Done
+deactivate INAService
+
+PlanningModel -> FireflyJava: getPlanningService
+FireflyJava -> INAService: Planning
+activate INAService
+INAService -> EPM: Planning
+activate EPM
+EPM -> INAService: Done
+deactivate EPM
+INAService  -> FireflyJava: Done
+deactivate INAService
+FireflyJava -> PlanningModel: Done
+deactivate INAService
+
+PlanningModel -> FireflyJava: getPrivateVersion
+FireflyJava -> PlanningModel: Done
+
+PlanningModel -> FireflyJava: getPublicVersions (ProcessValueHelp)
+FireflyJava -> INAService: Analytics
+INAService -> MDS
+MDS -> INAService: Done
+INAService -> FireflyJava: Done
+FireflyJava -> PlanningModel: Done
+
+PlanningModel -> PPRO_CORE_BACKEND: Done
+
 
 PPRO_CORE_BACKEND -> PPRO_CORE_FRONTEND: Done
 PPRO_CORE_FRONTEND -> User: Done
