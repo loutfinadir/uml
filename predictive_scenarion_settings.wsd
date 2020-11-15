@@ -101,9 +101,13 @@ deactivate INAService
 PPRO_CORE_BACKEND -> ContentLib: getMetadata (getPlanningModelInfo)
 ContentLib -> FireflyJS
 FireflyJS  -> INAService
+activate INAService
 INAService -> MDS
+activate MDS
 MDS -> INAService: Done
+deactivate MDS
 INAService -> FireflyJS: Done
+deactivate INAService
 FireflyJS -> ContentLib: Done
 ContentLib -> PPRO_CORE_BACKEND: Done
 
@@ -140,14 +144,18 @@ deactivate INAService
 FireflyJava -> PlanningModel: Done
 deactivate INAService
 
-PlanningModel -> FireflyJava: getPrivateVersion
+PlanningModel -> FireflyJava: PlanningService::getPrivateVersion
 FireflyJava -> PlanningModel: Done
 
 PlanningModel -> FireflyJava: getPublicVersions (ProcessValueHelp)
 FireflyJava -> INAService: Analytics
+activate INAService
 INAService -> MDS
+activate MDS
 MDS -> INAService: Done
+deactivate MDS
 INAService -> FireflyJava: Done
+deactivate INAService
 FireflyJava -> PlanningModel: Done
 
 PlanningModel -> PPRO_CORE_BACKEND: Done
