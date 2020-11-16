@@ -1,5 +1,3 @@
-//  https://apm.cf.eu10.hana.ondemand.com/e/f66da7fe-e37a-4712-a032-43754a3da350/#servicecall;sci=SERVICE-C8D137E7B20B549D;callURI=15996511Z1X1X0X91331115X20201112170906Y0Y0.session;gf=all
-
 @startuml
 autonumber "<b>(<u>##</u>)"
 actor User
