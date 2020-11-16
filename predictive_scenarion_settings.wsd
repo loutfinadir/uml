@@ -83,6 +83,9 @@ INAService -> FireflyJava: Done
 FireflyJava -> FireflyCubeProvider: Done
 deactivate INAService
 
+FireflyCubeProvider -> FireflyJava: getVariables
+FireflyJava -> FireflyCubeProvider: Done
+
 FireflyCubeProvider -> FireflyJava: getMeasures
 FireflyJava -> INAService: Analytics
 activate INAService
