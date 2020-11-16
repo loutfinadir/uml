@@ -19,7 +19,7 @@ start
 floating note left: write activity
 partition Write {
   :read chunk;
-  :call getWindowDatesForecast>
+  :getWindowDatesForecast;
   :getSegmentDistinctValues;
   :planning generateQuery;
   while (data of chunk available?)
@@ -33,11 +33,6 @@ partition Write {
 
 }
 stop
-start
-floating note left: getWindowDatesForecast activity
-partition getWindowDatesForecast {
 
-}
-stop
 
 @enduml
