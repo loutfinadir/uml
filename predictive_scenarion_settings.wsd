@@ -19,10 +19,14 @@ participant FireflyJava
 end box
 
 PPRO_CORE_FRONTEND -> ContentLib: getRepoView
-box "HANA XSC" #LightCyan
+
+box "ORCA Backend" #LightGoldenRodYellow
 participant ContentLib
 participant RestMember
 participant FireflyJS
+end box
+
+box "HANA XSC" #LightCyan
 participant INAService
 end box
 
