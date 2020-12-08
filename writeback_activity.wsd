@@ -2,8 +2,14 @@
 skinparam ConditionEndStyle hline
 start
 floating note left: read activity
+if (PLANNING_CHUNK_BY_ROWS) then (no)
+  :Get Nb segments;
+else (yes)
 :Get NbRows ApplyOut;
-if (NbRows < CHUNK_SIZE) then (no)
+endif
+
+
+if (NbRowsOrSegments < CHUNK_SIZE) then (no)
   :calculate nbchunks;
   while (chunk < nbchunks)
     :generate chunk query;
