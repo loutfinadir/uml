@@ -1,0 +1,11 @@
+@startuml
+
+interface ChunkProcessor {
+    void update()
+}
+
+class RowChunkProcessor implements ChunkProcessor
+
+class SegmentChunkProcessor implements ChunkProcessor
+
+@enduml
