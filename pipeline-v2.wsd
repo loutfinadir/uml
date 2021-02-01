@@ -1,0 +1,68 @@
+@startuml
+
+interface NodeConcept
+
+interface CubeNode extends NodeConcept {
+    CubeReference getCubeReference()
+    boolean getExcludeDimensionDescriptions()
+}
+
+interface Account {
+    String getName();
+    Account create(String name);
+    List<Account> create(String... names);
+}
+
+interface Measure {
+    String getName();
+    Measure create(String name);
+    List<Measure> create(String... names);
+}
+
+interface MeasureAccountPair {
+    Measure measure;
+    Account account;
+}
+
+interface CubeQueryDefinition extends CubeNode {
+    List<Attribute> getAttributes();
+    List<Measure> getMeasures();
+    List<Account> getAccounts();
+    List<MeasureAccountPair> getMeasureAccountPairs();
+    String getVersionId();
+    CurrencyMode getCurrencyMode();
+    boolean getUseMeasureAccountPairs();
+}
+
+interface CubeQueryReader {
+    String getQuery();
+    OutputPort getOut();
+}
+
+interface CubeReader extends CubeQueryDefinition {
+    OutputPort getOut();
+}
+
+interface PlanningCubeWriter extends CubeQueryDefinition {
+
+    InputPort getIn();
+    ColumnReference getForecast();
+    ColumnReference getTargetColumn();
+    ColumnReference getTime();
+}
+
+CubeQueryDefinition o-left- "0..*" Measure
+CubeQueryDefinition o-down- "0..*" Account
+CubeQueryDefinition o-down- "0..*" MeasureAccountPair
+CubeQueryReader -|> CubeNode
+
+note right of CubeQueryDefinition::getUseMeasureAccountPairs
+ "UseMeasureAccountPairs" allows 
+ consumers to prepare their 
+ changes in a few waves, 
+ without breaking compatibility
+ with the existing and could 
+ bind to their toggle.
+end note
+
+@enduml

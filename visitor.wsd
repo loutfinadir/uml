@@ -1,0 +1,27 @@
+@startuml
+
+
+interface Visitor {
+	void visit(Book book);
+	void visit(CD cd);
+}
+
+interface Visitable {
+	void accept(Visitor visitor);
+}
+
+class Book implements Visitable {
+}
+
+class CD implements Visitable {
+}
+
+class PostageVisitor implements Visitor {
+    double getTotalPostageForCart()
+}
+
+ShoppingCart -up> Visitable
+ShoppingCart -> Visitor
+
+
+@enduml
