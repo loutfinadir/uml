@@ -1,0 +1,29 @@
+@startuml
+
+enum Operator {
+	EQUAL
+}
+
+interface Member {
+	String getValue();
+    @DefaultValue(Enum = "EQUAL")
+	Operator getOperator();
+}
+
+interface Operand {
+	
+	List<Member> getMembers();
+}
+
+interface FilterSelection {
+
+	Operand getOperand();
+	
+	String getDimensionName();
+	String getHierarchy();
+}
+
+FilterSelection -> Operand
+Member -> Operator
+Operand o-> "1..*" Member
+@enduml
