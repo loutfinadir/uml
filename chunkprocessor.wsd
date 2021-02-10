@@ -4,8 +4,11 @@ interface ChunkProcessor {
     void update()
 }
 
+
 class RowChunkProcessor implements ChunkProcessor
 
-class SegmentChunkProcessor implements ChunkProcessor
+class DateChunkProcessor implements ChunkProcessor
+
+class SegmentChunkProcessor implements DateChunkProcessor
 
 @enduml
