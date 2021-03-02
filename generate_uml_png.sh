@@ -1,0 +1,1 @@
+for i in *.wsd; do curl --data-binary @"$i" https://plantuml-i051401-sac-orcastarkiller.cfapps.sap.hana.ondemand.com/png > "$i".png ; done
