@@ -7,16 +7,21 @@ interface CubeNode extends NodeConcept {
     boolean getExcludeDimensionDescriptions()
 }
 
+interface PropertyOptions {
+    boolean getMandatory();
+}
+
+
+interface Measure  {
+    String getName();
+    Measure create(String name);
+    List<Measure> create(String... names);
+}
+
 interface Account {
     String getName();
     Account create(String name);
     List<Account> create(String... names);
-}
-
-interface Measure {
-    String getName();
-    Measure create(String name);
-    List<Measure> create(String... names);
 }
 
 interface MeasureAccountPair {
@@ -51,12 +56,14 @@ interface PlanningCubeWriter extends CubeQueryDefinition {
     ColumnReference getTime();
 }
 
-CubeQueryDefinition o-left- "0..*" Measure
+CubeQueryDefinition o-right- "0..*" Measure
 CubeQueryDefinition o-down- "0..*" Account
 CubeQueryDefinition o-down- "0..*" MeasureAccountPair
 CubeQueryReader -|> CubeNode
+Measure -down|> PropertyOptions
+Account -left|> PropertyOptions
 
-note right of CubeQueryDefinition::getUseMeasureAccountPairs
+note left of CubeQueryDefinition::getUseMeasureAccountPairs
  "UseMeasureAccountPairs" allows 
  consumers to prepare their 
  changes in a few waves, 
