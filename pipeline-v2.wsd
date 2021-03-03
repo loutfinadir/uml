@@ -72,4 +72,11 @@ note left of CubeQueryDefinition::getUseMeasureAccountPairs
  bind to their toggle.
 end note
 
+note right of PropertyOptions::getMandatory
+ "Mandatory" allows consumers to decide 
+ if Pco should wether or not ignore the Measures
+ and Accounts if they are not exist. 
+ By default they are not ignored.
+end note
+
 @enduml
