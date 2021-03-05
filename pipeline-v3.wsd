@@ -25,7 +25,7 @@ interface CubeQueryDefinition extends CubeNode {
     List<Account> getAccounts();
     String getVersionId();
     CurrencyMode getCurrencyMode();
-    List<FilterSelection> getFilterSelections();
+    List<MemberSelection> getMemberSelections();
 }
 
 
@@ -61,7 +61,7 @@ interface Operand {
 	List<Member> getMembers();
 }
 
-interface FilterSelection {
+interface MemberSelection {
 
 	Operand getOperand();
 	
@@ -69,12 +69,12 @@ interface FilterSelection {
 	String getHierarchy();
 }
 
-FilterSelection -> Operand
+MemberSelection -> Operand
 Member -> Operator
 Operand o-> "1..*" Member
 CubeQueryDefinition o-left- "0..*" Measure
 CubeQueryDefinition o-down- "0..*" Account
-CubeQueryDefinition o-right- "0..*" FilterSelection
+CubeQueryDefinition o-right- "0..*" MemberSelection
 
 CubeQueryReader -|> CubeNode
 @enduml
