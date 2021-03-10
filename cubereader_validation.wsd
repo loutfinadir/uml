@@ -2,17 +2,19 @@
 skinparam ConditionEndStyle hline
 start
 floating note left: CubeReader Validation
-if (UseMeasureAccountPairs) then (no)
+
+note right
+  <b>NbMeasuresAccounts</b> = CubeReader.getMeasuresAccounts().size()
+  <b>NbAccounts</b> = CubeReader.getAccounts().size()
+  <b>NbMeasures</b> = CubeReader.getMeasures().size()
+end note
+if (NbMeasuresAccounts > 0) then (no)
     if (NbAccounts * NbMeasures > 1) then (yes)
         :raise Error1>
     endif
 else (yes)
     if (NbAccounts * NbMeasures != 0) then (yes)
         :raise Error2>
-    else (no)
-        if (NbMeasureAccountPairs == 0) then (yes)
-            :raise Error3>
-        endif
     endif
 endif
 
@@ -25,13 +27,9 @@ partition Error1 {
 stop
 start
 partition Error2 {
-  :QUERY_USE_MULTI_ACCOUNTS_AND_MEASURES_PAIRS_ERROR;
+  :QUERY_USE_MULTI_ACCOUNTS_MEASURES_API_ERROR;
 }
 stop
-start
-partition Error3 {
-  :QUERY_PROPERTY_ACCOUNTS_MEASURES_PAIRS_SHOULD_NODE_BE_EMPTY_ERROR;
-}
-stop
+
 
 @enduml
