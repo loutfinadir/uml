@@ -1,0 +1,48 @@
+
+@startuml
+interface EntityManager {
+    +EntityMetadata getEntityMetadata(String entityId) throws ProcessorException;
+    +EntityPermissions getEntityPermissions(String entityId) throws ProcessorException;
+    +void deleteEntity(String entityId) throws ProcessorException;
+}
+
+class EntityMetadata {
+    - Instant creationDate;
+    - Instant modificationDate;
+    - String createdBy;
+    - String modifiedBy;
+    - EntityPermissions permissions;
+}
+
+class EntityPermissions {
+    - boolean canCreateDoc;
+    - boolean canCreateFolder;
+    - boolean canRead;
+    - boolean canUpdate;
+    - boolean canDelete;
+}
+
+class EntityManagerImpl implements EntityManager {
+
+    + ContentlibClient client;
+}
+
+interface ContentlibClient {
+    - CONTENT_LIB_URL = "sap/fpa/services/rest/epm/contentlib";
+    - CONTENT_LIB_TECH_URL = "sap/fpa/services/contentlib/ContentlibService.xsjs";
+
+    + sendRequest();
+}
+
+note left of ContentlibClient::CONTENT_LIB_URL
+  The contentlib URL for regular calls
+end note
+
+note left of ContentlibClient::CONTENT_LIB_TECH_URL
+  The contentlib URL for tech-user calls
+end note
+
+EntityManager -left> EntityMetadata
+EntityManager -> EntityPermissions
+EntityManagerImpl -up> ContentlibClient
+@enduml

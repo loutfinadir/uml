@@ -7,10 +7,6 @@ interface CubeNode extends NodeConcept {
     boolean getExcludeDimensionDescriptions()
 }
 
-interface PropertyOptions {
-    boolean getMandatory();
-}
-
 
 interface Measure  {
     String getName();
@@ -24,19 +20,19 @@ interface Account {
     List<Account> create(String... names);
 }
 
-interface MeasureAccountPair {
-    Measure measure;
-    Account account;
+interface MeasureAccount {
+    Measure getMeasure();
+    Account getAccount();
+    boolean getMandatory();
 }
 
 interface CubeQueryDefinition extends CubeNode {
     List<Attribute> getAttributes();
     List<Measure> getMeasures();
     List<Account> getAccounts();
-    List<MeasureAccountPair> getMeasureAccountPairs();
+    List<MeasureAccount> getMeasuresAccounts();
     String getVersionId();
     CurrencyMode getCurrencyMode();
-    boolean getUseMeasureAccountPairs();
 }
 
 interface CubeQueryReader {
@@ -58,21 +54,10 @@ interface PlanningCubeWriter extends CubeQueryDefinition {
 
 CubeQueryDefinition o-right- "0..*" Measure
 CubeQueryDefinition o-down- "0..*" Account
-CubeQueryDefinition o-down- "0..*" MeasureAccountPair
+CubeQueryDefinition o-down- "0..*" MeasureAccount
 CubeQueryReader -|> CubeNode
-Measure -down|> PropertyOptions
-Account -left|> PropertyOptions
 
-note left of CubeQueryDefinition::getUseMeasureAccountPairs
- "UseMeasureAccountPairs" allows 
- consumers to prepare their 
- changes in a few waves, 
- without breaking compatibility
- with the existing and could 
- bind to their toggle.
-end note
-
-note right of PropertyOptions::getMandatory
+note left of MeasureAccount::getMandatory
  "Mandatory" allows consumers to decide 
  if Pco should wether or not ignore the Measures
  and Accounts if they are not exist. 
