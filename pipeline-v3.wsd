@@ -48,7 +48,7 @@ interface CubeQueryReader{
 
 interface MemberSelection {
 
-	String getValue();
+	List<String> getValues();
 	
 	String getDimensionName();
 	String getHierarchy();
