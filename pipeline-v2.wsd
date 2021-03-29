@@ -30,7 +30,7 @@ interface CubeQueryDefinition extends CubeNode {
     List<Attribute> getAttributes();
     List<Measure> getMeasures();
     List<Account> getAccounts();
-    List<MeasureAccount> getMeasuresAccounts();
+    List<MeasureAccount> getMeasureAccounts();
     String getVersionId();
     CurrencyMode getCurrencyMode();
 }
