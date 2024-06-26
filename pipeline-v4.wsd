@@ -1,0 +1,88 @@
+@startuml
+
+interface NodeConcept
+
+interface CubeNode extends NodeConcept {
+    CubeReference getCubeReference()
+    boolean getExcludeDimensionDescriptions()
+    List<Attribute> getAttributes();
+    List<Measure> getMeasures();
+    String getVersionId();
+}
+
+interface Account {
+    String getName();
+    Account create(String name);
+    List<Account> create(String... names);
+}
+
+interface Measure {
+    String getName();
+    Measure create(String name);
+    List<Measure> create(String... names);
+}
+
+interface DateWindow {
+    String getDateDimension();
+    int getLookBack();
+    String getProperty();
+}
+
+interface BookedDateRange {
+    DateWindow getDateWindow();
+    MemberSelection getUntil();
+}
+
+interface DataReader extends NodeConcept {
+
+    DatasetReference getDatasetReference();
+    OutputPort getOut();
+
+    RowOrderStrategy getRowOrderStrategy();
+
+}
+
+interface CubeQueryDefinition extends CubeNode {
+    List<Account> getAccounts();
+    CurrencyMode getCurrencyMode();
+    List<MemberSelection> getMemberSelections();
+    int getLookAheadDates();
+    BookedDateRange getBookedDateRange();
+}
+
+interface CubeDatasetReader extends CubeNode, DataReader{
+    OutputPort getOut();
+}
+
+interface CubeReader extends CubeQueryDefinition {
+    OutputPort getOut();
+}
+
+interface PlanningCubeWriter extends CubeQueryDefinition {
+
+    InputPort getIn();
+    ColumnReference getForecast();
+    ColumnReference getTargetColumn();
+    ColumnReference getTime();
+}
+
+interface CubeQueryReader{
+    String getQuery();
+   OutputPort getOut();
+}
+
+interface MemberSelection {
+
+	List<String> getMembers();
+	
+	String getDimensionName();
+	String getHierarchy();
+}
+
+CubeQueryDefinition o-left- "0..*" Measure
+CubeQueryDefinition o-right- "0..*" Account
+CubeQueryDefinition o-- "0..*" MemberSelection
+BookedDateRange -down> DateWindow
+
+CubeQueryReader -|> CubeNode
+@enduml

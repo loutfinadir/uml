@@ -1,0 +1,16 @@
+@startuml
+
+(*)  --> "for date in (H1..Hn)?" as loopHorizonDates
+     note left
+     Looping on horizon dates
+     end note
+        --> "for segment in (S1..Sn)" as loopSegments
+     note left
+     Looping on distinct segments
+     end note
+                if "date,segment does't exist ?"
+                    -->[true] "insert date,segment"
+            
+            --> loopSegments
+                --> loopHorizonDates
+@enduml

@@ -1,33 +1,59 @@
 @startuml
 skinparam ConditionEndStyle hline
 start
-floating note left: read activity
-if (PLANNING_CHUNK_BY_ROWS) then (no)
-  :Get Nb segments;
-else (yes)
-:Get NbRows ApplyOut;
+floating note left: read Applyout activity
+
+if (CHUNK_BY_SEGMENTS) then (yes)
+  :Chunk by segments;
+  if (NbSegments < CHUNK_SEGMENT_SIZE) then (no)
+    :calculate nbChunkSegments;
+    while (chunk < nbChunkSegments)
+      :applyout: generate chunk query;
+      :call ChunkDates>
+    endwhile
+  else (yes)
+    :Call ChunkDates>
+  endif
+else (no)
+  if (CHUNK_BY_DATES) then (yes)
+    :Call ChunkDates>
+  else (no)
+    :Chunk by rows;
+    if (NbRows < CHUNK_ROW_SIZE) then (no)
+      :calculate nbChunkRows;
+      while (chunk < nbChunkRows)
+        :applyout: generate chunk query;
+        :call Write>
+      endwhile
+    else (yes)
+      :Call Write>
+    endif
+  endif
 endif
 
-
-if (NbRowsOrSegments < CHUNK_SIZE) then (no)
-  :calculate nbchunks;
-  while (chunk < nbchunks)
-    :generate chunk query;
-    :call Write>
-  endwhile
-else (yes)
-  :call Write>
-endif
-
+start
+floating note left: Chunk by dates
+partition ChunkDates {
+  :calculate nbDates;
+  if (nbChunkDates < CHUNK_DATE_SIZE) then (no)
+    while (chunk < nbChunkDates)
+      :applyout: generate chunk query;
+      :call Write>
+    endwhile
+  else (yes)
+    :Call Write>
+  endif
+}
 stop
 
 start
-floating note left: write activity
+floating note left: write forecast activity
 partition Write {
   :read chunk;
   :getWindowDatesForecast;
   :getSegmentDistinctValues;
   :planning generateQuery;
+  floating note left:Filter on window dates\nFilter on distinct segments
   while (data of chunk available?)
     :collect CellValueContext;
   endwhile
@@ -36,6 +62,7 @@ partition Write {
     :update cell with CellValueContext;
   endwhile
   :submitValues;
+
 
 }
 stop

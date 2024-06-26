@@ -1,0 +1,51 @@
+@startuml
+
+box "olap.runtime" #LightBlue
+participant CubeReaderGenlet
+end box
+
+box "olap.common" #LightGreen
+participant ModelQuery
+participant FlexibleTime
+end box
+
+
+box "HANA XSC" #LightCyan
+participant INAService
+end box
+
+activate CubeReaderGenlet
+CubeReaderGenlet -> ModelQuery: (1) execute
+activate ModelQuery
+ModelQuery -> FlexibleTime: (2) getHorizonAndObservationDates
+activate FlexibleTime
+FlexibleTime -> FlexibleTime: (3) Setup query
+activate INAService
+FlexibleTime -> INAService: (4) getObservationDates
+INAService -> FlexibleTime: return FirstDate,LastDate (O1,...,On)
+
+FlexibleTime -> INAService: (5) getHorizonDates
+INAService -> FlexibleTime: return FirstDate,LastDate (H1,...,Hn)
+
+deactivate INAService
+deactivate FlexibleTime
+deactivate ModelQuery
+
+FlexibleTime -> ModelQuery: return observation & horizon dates
+
+activate ModelQuery
+ModelQuery -> ModelQuery: (6) Setup query BOOKED dates between (O1,On)
+activate INAService
+ModelQuery->INAService: (7) flattening observation dates
+INAService->ModelQuery: Done
+
+ModelQuery -[#yellow]> ModelQuery: (8) Setup query MASTER dates between (H1,Hn)
+ModelQuery-[#yellow]>INAService: (9) flattening horizon dates
+INAService->ModelQuery: Done
+
+deactivate INAService
+
+ModelQuery -> CubeReaderGenlet:Done
+deactivate ModelQuery
+deactivate CubeReaderGenlet
+@enduml

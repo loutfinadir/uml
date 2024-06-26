@@ -1,0 +1,56 @@
+@startuml
+
+box "planning.runtime"
+participant ChunkProcessor
+participant FireflyResultSetService
+participant GridResultSet
+end box
+
+box "HANA XSC"
+participant INAService
+end box
+
+
+ChunkProcessor -> FireflyResultSetService: (1) GenerateQuery
+note right ChunkProcessor
+GenerateQuery:
+* Project Date & Segments on RowAxis
+* Project Measures on ColumnAxis
+* Apply Filter on Segments
+* Apply Filter on Horizon dates
+* Apply Filter on Version
+end note
+
+FireflyResultSetService --> ChunkProcessor: Return
+
+FireflyResultSetService -> INAService: (2) Get ResultSet
+INAService --> FireflyResultSetService: Return IRsCursorResultSet
+
+FireflyResultSetService -> GridResultSet: (3) get Grid(IRsCursorResultSet)
+
+GridResultSet -> INAService: (4) Get CursorRowsAxis
+INAService --> GridResultSet: Return IRsCursorAxis 
+
+GridResultSet -> GridResultSet: Loop on Rows & Columns
+note right GridResultSet
+Loop on Rows & Columns:
+* For each row
+ * For each column
+   * Create MemberValueContext(name, value)
+* Add MemberValueContext in List
+end note
+
+GridResultSet --> FireflyResultSetService: Return Grid
+hnote across:Get Cell Coordinate
+
+loop nextRow applyOut
+            ChunkProcessor -> FireflyResultSetService: (1) UpdateCell(List<MemberValueContext>)
+FireflyResultSetService -> GridResultSet: getCellCoordinate(List<MemberValueContext>)
+GridResultSet --> FireflyResultSetService: Return CellCoordinate
+FireflyResultSetService -> FireflyResultSetService: IRsCursorResultSet \nupdate Cell (Mass Entry)
+FireflyResultSetService --> ChunkProcessor: Return
+end
+
+ChunkProcessor -> INAService: (2) SubmitValues
+INAService --> ChunkProcessor: Return
+@enduml

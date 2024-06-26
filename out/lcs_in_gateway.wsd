@@ -1,0 +1,19 @@
+@startuml
+interface SystemDescription {
+   + getDestination() : Destination
+   + getCustomHeaders() : Map<String, String>
+   + createSystem(String authorizationToken) : ISystemDescriptionBase
+ }
+ class HanaSystemDescription {
+   + getDestination() : Destination
+   + getCustomHeaders() : Map<String, String>
+   + createSystem(String authorizationToken) : ISystemDescriptionBase
+ }
+ class DwcSystemDescription {
+   + getDestination() : Destination
+   + getCustomHeaders() : Map<String, String>
+   + createSystem(String authorizationToken) : ISystemDescriptionBase
+ }
+ SystemDescription <|-- HanaSystemDescription
+ SystemDescription <|-- DwcSystemDescription
+ @enduml

@@ -1,0 +1,30 @@
+@startuml
+
+(*)  --> "check until date?"
+if "Is user defined date?" then
+
+  -->[false] "Query training dates" as booked
+  --> "Get interval dates from ResultSet 
+  (startDate, endDate)" as id
+
+else
+  ->[true] "Filter dates <= user-defined-date"
+
+  --> booked
+endif
+
+booked -down> "Query (n) forecasting dates > endDate " as unbooked
+unbooked -down> id
+
+unbooked --> "Generate INA Query" as flattening
+
+flattening --> "Filtering training dates
+       between (startDate, endDate)" as std
+flattening --> "Filtering forecasting dates
+       between (startDate, endDate)" as afd
+
+
+std -down> "Execute INA query" as query
+afd -down> query
+query -> "flatenning table"
+@enduml

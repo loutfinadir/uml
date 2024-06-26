@@ -1,0 +1,61 @@
+@startuml
+
+box "olap.runtime" #LightBlue
+participant CubeReaderGenlet
+end box
+
+box "SQL/HANA DB" #LightCyan
+participant HANADB
+end box
+
+box "olap.common" #LightGreen
+participant ModelQuery
+participant FlexibleTime
+end box
+
+box "olap.common" #LightBlue
+participant TargetDummyValue
+end box
+
+box "olap.common" #LightBlue
+participant VersionManagment
+end box
+
+box "HANA XSC" #LightCyan
+participant INAService
+end box
+
+CubeReaderGenlet -> ModelQuery: (1) execute
+ModelQuery -> FlexibleTime: (2) getHorizonAndObservationDates
+FlexibleTime -> FlexibleTime: (3) Setup query
+FlexibleTime -> INAService: (4) getObservationDates
+INAService -> FlexibleTime: return FirstDate,LastDate (O1..On)
+
+FlexibleTime -> INAService: (5) getHorizonDates
+INAService -> FlexibleTime: return FirstDate,LastDate (H1..Hn)
+FlexibleTime -> ModelQuery: (O1..On) and (H1..Hn)
+
+ModelQuery -> ModelQuery: (6) Get (H1..Hn) not in (O1..On) -> (D1..Dn)
+ModelQuery -> TargetDummyValue: (7) Writeback dummy value on target, version within (D1..Dn)
+
+
+alt#Gold #LightBlue is input public version ?
+                TargetDummyValue -> VersionManagment: Start edit mode
+                TargetDummyValue->INAService: writeback dummy values when value == null on (D1..Dn), target, publicVersion        
+                TargetDummyValue->VersionManagment: End edit mode
+            else #Bisque Private version
+                TargetDummyValue->INAService: writeback dummy values  when value == null on (D1..Dn), target, privateVersion                
+            end
+TargetDummyValue -> ModelQuery: return updated dates (D1..Dn)
+ModelQuery -> ModelQuery: (8) Setup query BOOKED dates between (O1..On)
+ModelQuery->INAService: (9) execute INA Query with BOOKED dates between (O1..On) dates
+INAService->HANADB: store
+
+ModelQuery -> ModelQuery: (10) Setup query BOOKED dates between (H1..Hn)
+
+ModelQuery->INAService: (11) execute INA Query with BOOKED dates between (H1..Hn) dates
+INAService->HANADB: store
+
+ModelQuery->VersionManagment: (12) Revert Dummy values (D1..Dn),target, version
+CubeReaderGenlet -> HANADB: (13) set null on target within (D1..Dn)
+@enduml

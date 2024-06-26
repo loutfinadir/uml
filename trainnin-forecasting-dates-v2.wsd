@@ -1,0 +1,77 @@
+@startuml
+
+box "olap.runtime" #LightBlue
+participant CubeReaderGenlet
+end box
+
+box "HANA DB" #LightCyan
+participant HANADB
+end box
+
+box "olap.common" #LightGreen
+participant ModelQuery
+participant FlexibleTime
+end box
+
+
+box "HANA XSC" #LightCyan
+participant INAService
+end box
+
+
+activate CubeReaderGenlet
+CubeReaderGenlet -> ModelQuery: (1) execute
+activate ModelQuery
+ModelQuery -> FlexibleTime: (2) getHorizonAndObservationDates
+activate FlexibleTime
+FlexibleTime -> FlexibleTime: (3) Setup query
+activate INAService
+FlexibleTime -> INAService: (4) getObservationDates
+INAService -> FlexibleTime: return FirstDate,LastDate (O1,...,On)
+
+FlexibleTime -> INAService: (5) getHorizonDates
+INAService -> FlexibleTime: return FirstDate,LastDate (H1,...,Hn)
+
+deactivate INAService
+deactivate FlexibleTime
+deactivate ModelQuery
+
+FlexibleTime -> ModelQuery: return observation & horizon dates
+
+activate ModelQuery
+ModelQuery -> ModelQuery: (6) Setup query BOOKED dates between (O1,On)
+
+activate INAService
+ModelQuery->INAService: (7) execute INA Query with BOOKED dates between (O1,On) dates
+INAService->HANADB: store
+HANADB->INAService
+INAService->ModelQuery: Done
+
+ModelQuery -> ModelQuery: (8) Setup query BOOKED dates between (H1,Hn)
+
+ModelQuery->INAService: (9) execute INA Query with BOOKED dates between (H1,Hn) dates
+INAService->HANADB: store
+HANADB->INAService
+INAService->ModelQuery: Done
+
+ModelQuery -> CubeReaderGenlet:Done
+
+CubeReaderGenlet -> HANADB : (10) Get distinct segments
+HANADB->CubeReaderGenlet: segments
+
+group (11) Generate Horizon dates [Post-Processing SQL]
+    loop date in  (H1..HN)
+        loop segment in (S1..SN)
+            alt#Gold #LightBlue date, segment: if exists continue
+                CubeReaderGenlet -> HANADB
+                CubeReaderGenlet->CubeReaderGenlet         
+            else #Pink Does not exists 
+            CubeReaderGenlet -> HANADB: store (date, segment)
+                
+            end
+        end
+    end
+end
+deactivate ModelQuery
+deactivate CubeReaderGenlet
+@enduml
